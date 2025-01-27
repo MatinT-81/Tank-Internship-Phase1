@@ -58,11 +58,12 @@ def update_user(user_id: int, user: UserUpdate, session: SessionDep) -> UserRead
     session.refresh(db_user)
     return db_user
 
-@app.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(user_id: int, session: SessionDep):
+
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int, session: SessionDep) -> Dict[str, str]:
     user = session.get(Users, user_id)
     if not user:
-        raise HTTPException(detail="User not found" , status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(detail="User not found", status_code=status.HTTP_404_NOT_FOUND)
     session.delete(user)
     session.commit()
     return {"detail": "User deleted"}
