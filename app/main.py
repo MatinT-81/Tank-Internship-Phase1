@@ -1,0 +1,79 @@
+# ---------------------------------------packages----------------------------------------------
+from typing import Annotated
+from sqlmodel import Session, select
+from fastapi import (
+    FastAPI , HTTPException , status,
+    Query , Path, Depends, Body
+    )
+
+from .database import create_db_and_tables, get_session, SessionDep
+from .models import *
+
+# ---------------------------------------base code----------------------------------------------
+app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
+# ---------------------------------------User----------------------------------------------
+
+@app.post("/user/", response_model=UserRead)
+def create_user(user: UserCreate, session: SessionDep):
+    user = Users.from_orm(user)
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+@app.get("/users/" , response_model= list[UserRead])
+def read_users(
+    session: SessionDep,
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100):
+        users = session.exec(select(Users).offset(offset).limit(limit)).all()
+        if not users:
+            raise HTTPException(detail="No users found" , status_code=status.HTTP_404_NOT_FOUND)
+        return users
+
+@app.get("/users/{user_id}" , response_model= UserRead)
+def read_user(user_id: int, session: SessionDep) -> Users:
+    user = session.get(Users, user_id)
+    if not user:
+        raise HTTPException(detail="User not found" , status_code=status.HTTP_404_NOT_FOUND)
+    return user
+
+@app.patch("/users/{user_id}" , response_model= UserRead)
+def update_user(user_id: int, user: UserUpdate, session: SessionDep) -> Users:
+    db_user = session.get(Users, user_id)
+    if not db_user:
+        raise HTTPException(detail="User not found" , status_code=status.HTTP_404_NOT_FOUND)
+    user_data = user.dict(exclude_unset=True)
+    for key, value in user_data.items():
+        setattr(db_user, key, value)
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
+
+@app.delete("/users/{user_id}" , status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(user_id: int, session: SessionDep):
+    user = session.get(Users, user_id)
+    if not user:
+        raise HTTPException(detail="User not found" , status_code=status.HTTP_404_NOT_FOUND)
+    session.delete(user)
+    session.commit()
+    return {"detail": "User deleted"}
+
+@app.delete("/users/all/")
+def delete_all_users(session: SessionDep, confirmation: str = Body(...)):
+    if confirmation != "I know what I'm doing!":
+        raise HTTPException(status_code=400, detail="Invalid confirmation text")
+    users = session.exec(select(Users)).all()
+    if not users:
+        raise HTTPException(status_code=404, detail="No users found")
+    for user in users:
+        session.delete(user)
+    session.commit()
+    return {"detail": "All users deleted"}
+
