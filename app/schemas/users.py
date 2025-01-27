@@ -1,9 +1,8 @@
-# ---------------------------------------packages----------------------------------------------
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel
 from pydantic import EmailStr
 from enum import Enum
 
-# ---------------------------------------UserModel----------------------------------------------
+
 class UserRole(str, Enum):
     SYSTEM_ADMIN = "System Admins"
     CUSTOMER = "Customers"
@@ -17,10 +16,6 @@ class UserBase(SQLModel):
     email: EmailStr
     user_role: UserRole
 
-class Users(UserBase, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    password: str
-
 class UserCreate(UserBase):
     password: str
 
@@ -29,5 +24,3 @@ class UserRead(UserBase):
 
 class UserUpdate(UserBase):
     password: str
-
-
