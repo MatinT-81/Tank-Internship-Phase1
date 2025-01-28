@@ -1,5 +1,7 @@
-from sqlmodel import  Field
+from sqlmodel import  Field, Relationship
+
 from app.schemas.users import UserBase
+from app.models import Author
 
 
 class User(UserBase, table=True):
@@ -7,6 +9,4 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     password: str
 
-
-
-
+    author: "Author" | None = Relationship(back_populates="user")

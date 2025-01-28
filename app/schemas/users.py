@@ -21,6 +21,7 @@ class UserCreate(UserBase):
 
 class UserRead(UserBase):
     id: int
+    author_id: int | None = None
 
 class UserUpdate(UserBase):
     password: str

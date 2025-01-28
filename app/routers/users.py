@@ -15,7 +15,18 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.post("/", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate, session: SessionDep) -> UserRead:
+    import re
     user = User.model_validate(user)
+    if user.phone_num:
+        pattern1 = "^09[\d]{9}$" 
+        pattern2 = "^\+989[\d]{9}$"
+        if re.match(pattern1 , str) or re.match(pattern2 , str):
+            pass
+        else:
+            raise HTTPException(detail="Phone number is not valid" , status_code=status.HTTP_400_BAD_REQUEST)
+        
+    if 'admin' in user.username:
+        raise HTTPException(detail="'admin' can't be in username" , status_code=status.HTTP_400_BAD_REQUEST)
     await session.add(user)
     await session.commit()
     await session.refresh(user)
