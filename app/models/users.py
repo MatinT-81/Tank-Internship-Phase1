@@ -9,4 +9,4 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     password: str
 
-    author: "Author" | None = Relationship(back_populates="user")
+    author: "Author" = Relationship(back_populates="user")

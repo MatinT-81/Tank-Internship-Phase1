@@ -3,10 +3,7 @@ from sqlmodel import  Field, Relationship
 from typing import List
 
 from app.schemas.authors import AuthorBase
-
 from app.models.links import BookAuthorLink
-from app.models import User
-from app.models import Book
 
 
 class Author(AuthorBase, table=True):

@@ -4,7 +4,6 @@ from typing import List
 
 from app.schemas.books import BookBase
 from app.models.links import BookAuthorLink
-from app.models import Author
 
 
 class Book(BookBase, table=True):
