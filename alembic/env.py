@@ -8,7 +8,7 @@ from alembic import context
 from sqlmodel import SQLModel
 
 from app.config import settings
-from app.models import User, Author, Book
+from app.models import User, Author, Book, Genre
 from app.models.links import BookAuthorLink
 
 # this is the Alembic Config object, which provides

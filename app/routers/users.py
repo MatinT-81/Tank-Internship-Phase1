@@ -3,7 +3,7 @@ from typing import Annotated, Dict, List
 from sqlmodel import select
 from fastapi import (
     APIRouter , HTTPException , status,
-    Query, Body
+    Query
     )
 
 from app.models.users import * 
@@ -20,14 +20,15 @@ async def create_user(user: UserCreate, session: SessionDep) -> UserRead:
     if user.phone_num:
         pattern1 = "^09[\d]{9}$" 
         pattern2 = "^\+989[\d]{9}$"
-        if re.match(pattern1 , str) or re.match(pattern2 , str):
+        if re.match(pattern1, user.phone_num) or re.match(pattern2, user.phone_num):
             pass
         else:
-            raise HTTPException(detail="Phone number is not valid" , status_code=status.HTTP_400_BAD_REQUEST)
+            raise HTTPException(detail="Phone number is not valid", status_code=status.HTTP_400_BAD_REQUEST)
         
     if 'admin' in user.username:
-        raise HTTPException(detail="'admin' can't be in username" , status_code=status.HTTP_400_BAD_REQUEST)
-    await session.add(user)
+        raise HTTPException(detail="'admin' can't be in username", status_code=status.HTTP_400_BAD_REQUEST)
+    
+    session.add(user)
     await session.commit()
     await session.refresh(user)
     return user
@@ -69,10 +70,10 @@ async def update_user(user_id: int, user: UserUpdate, session: SessionDep) -> Us
 
 @router.delete("/{user_id}")
 async def delete_user(user_id: int, session: SessionDep) -> Dict[str, str]:
-    user = await session.get(User, user_id)
+    user = session.get(User, user_id)
     if not user:
         raise HTTPException(detail="User not found", status_code=status.HTTP_404_NOT_FOUND)
-    await session.delete(user)
+    session.delete(user)
     await session.commit()
     return {"detail": "User deleted"}
 
