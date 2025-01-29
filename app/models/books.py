@@ -12,5 +12,6 @@ class Book(BookBase, table=True):
     ISBN: str
 
     authors: List["Author"] = Relationship(back_populates="books", link_model=BookAuthorLink)
+    
     genre_id: int = Field(foreign_key="genres.id")
     genre: "Genre" = Relationship(back_populates="books")

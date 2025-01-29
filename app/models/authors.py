@@ -5,7 +5,6 @@ from typing import List
 from app.schemas.authors import AuthorBase
 from app.models.links import BookAuthorLink
 
-
 class Author(AuthorBase, table=True):
     __tablename__ = "authors"
     id: int | None = Field(default=None, primary_key=True)
@@ -16,3 +15,6 @@ class Author(AuthorBase, table=True):
     user: "User" = Relationship(back_populates="author")
 
     books: List["Book"] = Relationship(back_populates="authors", link_model=BookAuthorLink)
+
+    city_id: int = Field(foreign_key="cities.id")
+    city: "City" = Relationship(back_populates="authors")
