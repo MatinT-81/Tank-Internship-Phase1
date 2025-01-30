@@ -9,4 +9,6 @@ class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     password: str
 
-    author: "Author" = Relationship(back_populates="user")
+    author: "Author" = Relationship(back_populates="user", cascade_delete=True)
+
+    customer: "Customer" = Relationship(back_populates="user", cascade_delete=True)

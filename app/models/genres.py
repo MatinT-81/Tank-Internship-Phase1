@@ -8,4 +8,4 @@ class Genre(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
 
-    books: List["Book"] = Relationship(back_populates="genre")
+    books: List["Book"] = Relationship(back_populates="genre", cascade_delete=True)
