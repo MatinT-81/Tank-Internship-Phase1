@@ -14,3 +14,5 @@ class Customer(CustomerBase, table=True):
 
     user_id: int | None = Field(default=None, foreign_key="users.id", ondelete="CASCADE")
     user: "User" = Relationship(back_populates="customer")
+
+    reservation: "Reservation" = Relationship(back_populates="customer", cascade_delete=True)

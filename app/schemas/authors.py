@@ -27,5 +27,5 @@ class AuthorRead(AuthorBase):
     city_id: int
 
 class AuthorUpdate(AuthorBase):
-    bank_account_number: str
-    goodreads_url: str
+    bank_account_number: str | None = None
+    goodreads_url: str | None = None

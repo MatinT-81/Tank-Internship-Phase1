@@ -16,3 +16,5 @@ class Book(BookBase, table=True):
     
     genre_id: Optional[int] = Field(foreign_key="genres.id", ondelete="CASCADE")
     genre: Optional[Genre] = Relationship(back_populates="books")
+
+    reservation: List["Reservation"] = Relationship(back_populates="book", cascade_delete=True)
