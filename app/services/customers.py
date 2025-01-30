@@ -2,7 +2,7 @@ from sqlmodel import select
 
 from fastapi import HTTPException, status
 
-from app.models.customers import Customer
+from app.models import Customer, User
 from app.dependecies import SessionDep
 
 class CustomerService:
@@ -20,6 +20,10 @@ class CustomerService:
         return customer
 
     async def create_customer(self, customer: Customer, session: SessionDep):
+        user = await session.get(User, customer.user_id)
+        if not user:
+            raise HTTPException(detail="User not found", status_code=status.HTTP_404_NOT_FOUND)
+
         session.add(customer)
         await session.commit()
         await session.refresh(customer)

@@ -1,5 +1,7 @@
 from sqlmodel import SQLModel
 
+from pydantic import validator
+
 from typing import List
 
 from app.schemas.books import BookRead
@@ -17,6 +19,12 @@ class AuthorCreate(AuthorBase):
     city_id: int
     book_id: List[int]
 
+    @validator('bank_account_number')
+    def validate_bank_account_number(cls, v):
+        if len(v) != 16 and not v.isdigit():
+            raise ValueError("Bank account number must be 16 digits")
+        return v
+
 class AuthorRead(AuthorBase):
     id: int
     bank_account_number: str
@@ -29,3 +37,9 @@ class AuthorRead(AuthorBase):
 class AuthorUpdate(AuthorBase):
     bank_account_number: str | None = None
     goodreads_url: str | None = None
+
+    @validator('bank_account_number')
+    def validate_bank_account_number(cls, v):
+        if len(v) != 16 and not v.isdigit():
+            raise ValueError("Bank account number must be 16 digits")
+        return v
