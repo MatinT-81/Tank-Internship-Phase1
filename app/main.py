@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import users
+from app.routers import users, authors, books, customers, reservations
 
 
 app = FastAPI()
@@ -16,3 +16,7 @@ app.add_middleware(
 )
 
 app.include_router(users.router)
+app.include_router(authors.router)
+app.include_router(books.router)
+app.include_router(customers.router)
+app.include_router(reservations.router)
